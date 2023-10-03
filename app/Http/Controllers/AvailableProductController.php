@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
+use App\Models\AvailableProduct;
+use App\Models\BuyOrder;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class ProductController extends Controller
+class AvailableProductController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,10 +16,20 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::all(); // SELECT * FROM products
+        $availableProducts = AvailableProduct::with("buyOrder.product")->with("orderItems")->get();
 
-        return Inertia::render('Product/Index', [
-            "products" => $products
+        foreach($availableProducts as $availableProduct) {
+
+            $quantitySold = 0;
+            foreach($availableProduct->orderItems as $orderItem){
+                $quantitySold += $orderItem->pivot->quantity;
+            }
+
+            $availableProduct->quantitySold =  $availableProduct-> quantity - $quantitySold;
+        }
+
+        return Inertia::render('AvailableProduct/Index', [
+            "products" => $availableProducts
         ]);
     }
 
@@ -29,7 +40,12 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Product/Create');
+        $buyOrder = new BuyOrder();
+        $buyOrders = $buyOrder->buyOrdersNotavailableProducts()->get();
+
+        return Inertia::render('AvailableProduct/Create', [
+            "buyOrders" => $buyOrders
+        ]);
     }
 
     /**
@@ -40,11 +56,11 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $newProduct = new Product();
-        $newProduct->fill($request->all());
-        $newProduct->save();
+        $newAvailableProduct = new AvailableProduct();
+        $newAvailableProduct->fill($request->all());
+        $newAvailableProduct->save();
 
-        return redirect()->route("products.index");
+        return redirect()->route("available-products.index");
     }
 
     /**
@@ -64,11 +80,9 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Product $product) // Dependecy Injection
+    public function edit($id)
     {
-        return Inertia::render('Product/Edit', [
-            "product" => $product
-        ]);
+        //
     }
 
     /**
@@ -78,10 +92,9 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, $id)
     {
-        $product->update($request->all());
-        return redirect()->route("products.index");
+        //
     }
 
     /**
@@ -90,9 +103,8 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product)
+    public function destroy($id)
     {
-        $product->delete();
-        return redirect()->route("products.index");
+        //
     }
 }

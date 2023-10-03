@@ -11,9 +11,14 @@ class AvailableProduct extends Model
 
     protected $guarded = [];
 
-    public function orders() {
-        return $this->belongsToMany(Order::class, 'order_item');
+    // public function orders() {
+    //     return $this->belongsToMany(Order::class, 'order_item');
+    // }
+
+    public function orderItems() {
+        return $this->belongsToMany(Order::class, 'order_item')->withPivot('quantity');
     }
+
 
     public function buyOrder() {
         return $this->belongsTo(BuyOrder::class);

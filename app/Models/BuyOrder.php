@@ -18,4 +18,8 @@ class BuyOrder extends Model
     public function availableProducts() {
         return $this->hasMany(AvailableProduct::class);
     }
+
+    public function buyOrdersNotavailableProducts() {
+        return $this->whereDoesntHave('availableProducts');
+    }
 }

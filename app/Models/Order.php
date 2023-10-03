@@ -18,4 +18,8 @@ class Order extends Model
     public function user() {
         return $this->belongsTo(User::class);
     }
+
+    public function orderItems() {
+        return $this->belongsToMany(AvailableProduct::class, 'order_item')->withPivot('quantity');
+    }
 }

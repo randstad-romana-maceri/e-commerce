@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AvailableProductController;
+use App\Http\Controllers\BuyOrderController;
+
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -36,6 +39,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('products', ProductController::class);
+    Route::resource('available-products', AvailableProductController::class);
+    Route::resource('buy-orders', BuyOrderController::class);
+
 });
 
 require __DIR__.'/auth.php';

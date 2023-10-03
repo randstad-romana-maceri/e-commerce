@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BuyOrder;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class ProductController extends Controller
+class BuyOrderController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,10 +16,10 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::all(); // SELECT * FROM products
+        $buyOrders = BuyOrder::with("product")->get();
 
-        return Inertia::render('Product/Index', [
-            "products" => $products
+        return Inertia::render('BuyOrder/Index', [
+            "buyOrders" => $buyOrders
         ]);
     }
 
@@ -29,7 +30,10 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Product/Create');
+        $products = Product::all();
+        return Inertia::render('BuyOrder/Create', [
+            "products" => $products
+        ]);
     }
 
     /**
@@ -40,12 +44,13 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $newProduct = new Product();
-        $newProduct->fill($request->all());
-        $newProduct->save();
+        $newBuyOrder = new BuyOrder();
+        $newBuyOrder->fill($request->all());
+        $newBuyOrder->save();
 
-        return redirect()->route("products.index");
+        return redirect()->route("buy-orders.index");
     }
+
 
     /**
      * Display the specified resource.
@@ -64,11 +69,9 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Product $product) // Dependecy Injection
+    public function edit($id)
     {
-        return Inertia::render('Product/Edit', [
-            "product" => $product
-        ]);
+        //
     }
 
     /**
@@ -78,10 +81,9 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, $id)
     {
-        $product->update($request->all());
-        return redirect()->route("products.index");
+        //
     }
 
     /**
@@ -90,9 +92,8 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product)
+    public function destroy($id)
     {
-        $product->delete();
-        return redirect()->route("products.index");
+        //
     }
 }
