@@ -25,7 +25,7 @@ class AvailableProductController extends Controller
                 $quantitySold += $orderItem->pivot->quantity;
             }
 
-            $availableProduct->quantitySold =  $availableProduct-> quantity - $quantitySold;
+            $availableProduct->quantitySold =  $availableProduct->quantity - $quantitySold;
         }
 
         return Inertia::render('AvailableProduct/Index', [
@@ -82,7 +82,18 @@ class AvailableProductController extends Controller
      */
     public function edit($id)
     {
-        //
+        $availableProduct = AvailableProduct::where("id", $id)->with("buyOrder.product")->with("orderItems")->first();
+
+        $quantitySold = 0;
+        foreach($availableProduct->orderItems as $orderItem){
+            $quantitySold += $orderItem->pivot->quantity;
+        }
+
+        $availableProduct->quantitySold = $quantitySold;
+    
+        return Inertia::render('AvailableProduct/Edit', [
+            "availableProduct" => $availableProduct
+        ]);
     }
 
     /**
@@ -92,9 +103,10 @@ class AvailableProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, AvailableProduct $availableProduct)
     {
-        //
+        $availableProduct->update(["quantity" => $request->newQuantity]);
+        return redirect()->route("available-products.index");
     }
 
     /**

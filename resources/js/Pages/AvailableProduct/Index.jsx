@@ -48,10 +48,9 @@ export default function Index({ auth, products }) {
                                     <th>Nome</th>
                                     <th>Nome Fornitore</th>
                                     <th>Totale acquistato</th>
+                                    <th>Totale venduto</th>
                                     <th>Totale in magazzino</th>
                                     <th>Totale in vendita</th>
-                                    <th>Totale venduto</th>
-                                    <th>Totale rimanente</th>
                                     <th>Azioni</th>
                                 </tr>
                             </thead>
@@ -65,20 +64,20 @@ export default function Index({ auth, products }) {
                                         <td>{product.buy_order.company}</td>
                                         <td>{product.buy_order.quantity}</td>
                                         <td>
+                                            {product.quantity -
+                                                product.quantitySold}
+                                        </td>
+                                        <td>
                                             {product.buy_order.quantity -
                                                 (product.quantity -
                                                     product.quantitySold)}
                                         </td>
                                         <td>{product.quantity}</td>
-                                        <td>
-                                            {product.quantity -
-                                                product.quantitySold}
-                                        </td>
-                                        <td>{product.quantitySold}</td>
+
                                         <td className="flex h-full items-center justify-center gap-2 p-4">
                                             <Link
                                                 href={route(
-                                                    "products.edit",
+                                                    "available-products.edit",
                                                     product.id
                                                 )}
                                             >
